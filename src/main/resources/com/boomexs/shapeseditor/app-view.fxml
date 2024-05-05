@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="appwindow" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/21" fx:controller="com.boomexs.shapeseditor.Controller">
+    <children>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <top>
+                <ToolBar fx:id="topBar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <MenuButton mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem fx:id="fileOpen" mnemonicParsing="false" text="Open"/>
+                                <MenuItem fx:id="fileSave" mnemonicParsing="false" text="Save current tab to disk"/>
+                            </items>
+                        </MenuButton>
+                        <Button mnemonicParsing="false" text="How to use?">
+                            <tooltip>
+                                <Tooltip/>
+                            </tooltip>
+                        </Button>
+                    </items>
+                </ToolBar>
+            </top>
+            <left>
+                <VBox fx:id="leftSidebar" alignment="TOP_CENTER" prefWidth="256.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label text="Tool"/>
+                        <HBox alignment="CENTER">
+                            <children>
+                                <RadioButton fx:id="rectangleTool" mnemonicParsing="false" prefHeight="64.0"
+                                             prefWidth="64.0" styleClass="toggle-button">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="tool"/>
+                                    </toggleGroup>
+                                    <graphic>
+                                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="32.0"
+                                                   stroke="BLACK" strokeType="INSIDE" width="32.0"/>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="circleTool" mnemonicParsing="false" prefHeight="64.0"
+                                             prefWidth="64.0" styleClass="toggle-button" toggleGroup="$tool">
+                                    <graphic>
+                                        <Circle fill="DODGERBLUE" radius="16.0" stroke="BLACK" strokeType="INSIDE"/>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="triangleTool" mnemonicParsing="false" prefHeight="64.0"
+                                             prefWidth="64.0" styleClass="toggle-button" toggleGroup="$tool">
+                                    <graphic>
+                                        <Polygon fill="DODGERBLUE" points="-16.0, 16.0, 16.0, 16.0, 0.0, -16.0"
+                                                 stroke="BLACK" strokeType="INSIDE"/>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="editTool" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0"
+                                             selected="true" styleClass="toggle-button" toggleGroup="$tool">
+                                    <graphic>
+                                        <SVGPath
+                                                content="M4 0l16 12.279-6.951 1.17 4.325 8.817-3.596 1.734-4.35-8.879-5.428 4.702z"/>
+                                    </graphic>
+                                </RadioButton>
+                            </children>
+                        </HBox>
+                        <Label text="Selected Item"/>
+                    </children>
+                </VBox>
+            </left>
+            <right>
+                <VBox fx:id="rightSidebar" prefWidth="256.0" BorderPane.alignment="CENTER"/>
+            </right>
+            <center>
+                <TabPane fx:id="tabBar" tabClosingPolicy="ALL_TABS" BorderPane.alignment="CENTER"/>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
