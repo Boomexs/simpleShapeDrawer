@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+// START HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class app extends Application {
     private TabManager tabManager;
     private FileManager fileManager;

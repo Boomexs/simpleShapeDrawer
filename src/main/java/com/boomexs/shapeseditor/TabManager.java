@@ -9,74 +9,94 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code TabManager} class is responsible for managing the tabs within the shapes editor application.
+ * It provides functionality to add, remove, and update tabs, each associated with an {@code EntityListFile}.
+ */
 public class TabManager {
-    private Scene scene;
-    private Controller controller;
+    private final Scene scene;
+    private final Controller controller;
+    public List<TabStructure> tabs = new ArrayList<>();
+    private EntityListFile currentFile; // it is actually used
 
-    private List<TabStructure> tabs = new ArrayList<>();
-
-    private PaneEditor paneEditor;
-
-    // CURRENT TAB DEPENDENT
-    private EntityListFile currentFile;
-
+    /**
+     * Constructs a new {@code TabManager} with the specified scene and controller.
+     *
+     * @param scene      the scene to which this tab manager is attached
+     * @param controller the controller managing the tab manager
+     */
     public TabManager(Scene scene, Controller controller) {
         this.scene = scene;
         this.controller = controller;
 
-        addSelectionChangeListener(controller.tabBar);
+        addNewTabButton();
         PaneEditor.addToolChangeUpdater(controller);
 
         System.out.println("TabManager created");
     }
 
-    /*private void addPaneEditor() throws IllegalArgumentException {
-        Tab currenttab = controller.tabBar.getSelectionModel().getSelectedItem();
-        Node node = currenttab.getContent();
-        ScrollPane scrollPane;
-        if(node instanceof ScrollPane) {
-            scrollPane = (ScrollPane) node;
-        }
-        else{throw new IllegalArgumentException("Loaded file is incorrect");}
-        node = scrollPane.getContent();
-        if(node instanceof Pane) {
-            //currentPane = (Pane) node;
-        }
-        else{throw new IllegalArgumentException("Loaded file is incorrect");}
-    }*/
-    private void addSelectionChangeListener(TabPane tabPane) {
-        tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-            @Override
-            public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                System.out.println("Tab changed");
-                if (paneEditor != null) {
-                    paneEditor.killGUI();
+    /**
+     * Adds a button to create new tabs. When the button is selected, a new tab is created and opened.
+     */
+    private void addNewTabButton() {
+        Tab addTab = new Tab("Create Tab"); // You can replace the text with an icon
+        addTab.setClosable(false);
+        controller.tabBar.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            for (TabStructure tab : tabs) {
+                if (oldTab == tab.tab) {
+                    try {
+                        tab.getPaneEditor().killGUI();
+                    } catch (Exception e) {
+                        // Do nothing
+                    }
                 }
-                TabStructure mother = getTabStructureFromTab(newValue);
-                if (mother == null) {
-                    return;
+            }
+            for (TabStructure tab : tabs) {
+                if (newTab == tab.tab) {
+                    try {
+                        tab.getPaneEditor().addGUI();
+                    } catch (Exception e) {
+                        // Do nothing
+                    }
                 }
-
-                paneEditor = new PaneEditor(scene, controller, mother);
-                paneEditor.addGUI();
+            }
+            if (newTab == addTab) {
+                createTabFromELF(new EntityListFile());
+                controller.tabBar.getSelectionModel().select(controller.tabBar.getTabs().size() - 2); // Selecting the tab before the button, which is the newly created one
             }
         });
+        controller.tabBar.getTabs().add(addTab);
     }
 
-
+    /**
+     * Adds a {@code TabStructure} to the list of tabs and inserts it into the tab bar.
+     *
+     * @param tabStructure the {@code TabStructure} to be added
+     */
     private void addTabStructure(TabStructure tabStructure) {
         tabs.add(tabStructure);
-        controller.tabBar.getTabs().add(tabStructure.tab);
+        controller.tabBar.getTabs().add(controller.tabBar.getTabs().size() - 1, tabStructure.tab);
     }
 
+    /**
+     * Removes a {@code TabStructure} from the list of tabs and the tab bar.
+     *
+     * @param tabStructure the {@code TabStructure} to be removed
+     */
     private void removeTabStructure(TabStructure tabStructure) {
         tabs.remove(tabStructure);
         controller.tabBar.getTabs().remove(tabStructure.tab);
     }
 
+    /**
+     * Creates a new tab from the specified {@code EntityListFile}.
+     *
+     * @param elf the {@code EntityListFile} from which to create the new tab
+     */
     public void createTabFromELF(EntityListFile elf) {
         Tab tab;
         if (elf.file != null) {
@@ -100,6 +120,7 @@ public class TabManager {
             pane.getChildren().add(entity.reference);
         });
         TabStructure tabStructure = new TabStructure(elf, tab);
+        tabStructure.setPaneEditor(new PaneEditor(scene, controller, tabStructure));
 
         // Add event handler to call remove tab structure
         tab.addEventHandler(Tab.TAB_CLOSE_REQUEST_EVENT, non -> {
@@ -110,6 +131,27 @@ public class TabManager {
         addTabStructure(tabStructure);
     }
 
+    /**
+     * Updates the file associated with the specified {@code TabStructure}.
+     *
+     * @param tabStructure the {@code TabStructure} to be updated
+     * @param file         the new file to associate with the tab structure
+     */
+    public void updateTabStructureFile(TabStructure tabStructure, File file) {
+        for (TabStructure tab : tabs) {
+            if (tab == tabStructure) {
+                tabStructure.elf.file = file;
+                tabStructure.tab.setText(tabStructure.elf.file.getName());
+            }
+        }
+    }
+
+    /**
+     * Retrieves the {@code TabStructure} associated with the specified tab.
+     *
+     * @param tab the tab for which to retrieve the associated {@code TabStructure}
+     * @return the {@code TabStructure} associated with the specified tab, or null if none is found
+     */
     private TabStructure getTabStructureFromTab(Tab tab) {
         for (TabStructure tabStructure : tabs) {
             if (tabStructure.tab == tab) {
