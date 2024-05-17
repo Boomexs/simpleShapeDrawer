@@ -2,10 +2,12 @@ package com.boomexs.shapeseditor;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
@@ -115,6 +117,7 @@ public class TabManager {
                         "    -fx-border-color: red;"
         );// CSS END
         scrollPane.setContent(pane);
+
         tab.setContent(scrollPane);
         elf.entityList.getEntities().forEach(entity -> {
             pane.getChildren().add(entity.reference);

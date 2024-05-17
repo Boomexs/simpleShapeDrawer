@@ -179,6 +179,7 @@ public class PaneEditor {
         }
         focusedEntity.setRotation(focusedEntity.rotation += scrollEvent.getDeltaY() * 0.15);
         focusedEntity.changeSizeBy(scrollEvent.getDeltaX() * 0.1);
+        scrollEvent.consume();
     }
 
     /**
